@@ -19,6 +19,29 @@ st.set_page_config(
 )
 
 
+def _check_password() -> bool:
+    if st.session_state.get("authenticated"):
+        return True
+
+    with st.form("login"):
+        st.markdown("### NYC Taxi Demand Forecast")
+        password = st.text_input("Password", type="password")
+        submitted = st.form_submit_button("Enter")
+
+    if submitted:
+        if password == st.secrets.get("PASSWORD", ""):
+            st.session_state["authenticated"] = True
+            st.rerun()
+        else:
+            st.error("Incorrect password.")
+
+    return False
+
+
+if not _check_password():
+    st.stop()
+
+
 def _build_chart(
     raw_df: pd.DataFrame,
     forecast_df: pd.DataFrame,
