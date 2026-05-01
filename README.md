@@ -1,6 +1,6 @@
 # NYC Taxi Demand Forecast
 
-A multi-agent forecasting demo built with Streamlit. Fetches NYC yellow taxi trip data, generates a probabilistic forecast using Prophet, and produces an executive summary via Claude.
+A multi-agent forecasting demo built with Streamlit. Fetches NYC yellow taxi trip data, generates a probabilistic forecast using Prophet, and produces an executive summary via Gemini.
 
 ## Live Demo
 
@@ -14,7 +14,19 @@ Three independent agents orchestrated by `app.py`:
 |-------|------|------|
 | Data | `agents/data_agent.py` | Downloads NYC TLC parquet, aggregates to daily trip counts |
 | Forecasting | `agents/forecasting_agent.py` | Fits Prophet model, returns probabilistic forecast |
-| Summary | `agents/summary_agent.py` | Calls Claude Sonnet 4.6 to generate an executive summary |
+| Summary | `agents/summary_agent.py` | Calls Gemini 2.0 Flash to generate an executive summary |
+
+```mermaid
+flowchart TD
+    A[NYC TLC Public Dataset] -->|HTTP download| B[Data Agent\ndata_agent.py]
+    B -->|daily trip counts DataFrame| C[Forecasting Agent\nforecasting_agent.py]
+    B -->|daily trip counts DataFrame| D[app.py\nStreamlit UI]
+    C -->|Prophet forecast DataFrame| D
+    C -->|forecast statistics| E[Summary Agent\nsummary_agent.py]
+    B -->|historical statistics| E
+    E -->|3-paragraph markdown| D
+    F[Google Gemini 2.0 Flash\nfree API] -->|LLM inference| E
+```
 
 ## A Note on "Multi-Agent"
 
@@ -33,7 +45,7 @@ In practice, this would be implemented using an agent framework (such as the Ant
 - [Streamlit](https://streamlit.io) — UI and deployment
 - [Prophet](https://facebook.github.io/prophet/) — time series forecasting
 - [Plotly](https://plotly.com) — interactive chart
-- [Claude Sonnet 4.6](https://www.anthropic.com) — natural-language executive summary
+- [Google Gemini 2.0 Flash](https://ai.google.dev) — natural-language executive summary (free tier)
 - [NYC TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) — public dataset
 
 ## Local Setup
@@ -49,9 +61,10 @@ pip install -r requirements.txt
 Create `.streamlit/secrets.toml` (see `secrets.toml.example`):
 
 ```toml
-ANTHROPIC_API_KEY = "sk-ant-..."
-PASSWORD = "your-password"
+GEMINI_API_KEY = "AIza..."
 ```
+
+Get a free API key from Google AI Studio at https://aistudio.google.com.
 
 ```bash
 streamlit run app.py

@@ -1,10 +1,10 @@
 import os
 
-import anthropic
+import google.generativeai as genai
 import pandas as pd
 import streamlit as st
 
-MODEL = "claude-sonnet-4-6"
+MODEL = "gemini-2.0-flash"
 
 _SYSTEM_PROMPT = (
     "You are a transportation analytics specialist providing executive-level briefings "
@@ -19,14 +19,14 @@ _SYSTEM_PROMPT = (
 
 
 def _get_api_key() -> str:
-    key = st.secrets.get("ANTHROPIC_API_KEY")
+    key = st.secrets.get("GEMINI_API_KEY")
     if key:
         return key
-    key = os.environ.get("ANTHROPIC_API_KEY")
+    key = os.environ.get("GEMINI_API_KEY")
     if key:
         return key
     raise ValueError(
-        "ANTHROPIC_API_KEY not found. "
+        "GEMINI_API_KEY not found. "
         "Set it in .streamlit/secrets.toml locally or in the Streamlit Cloud dashboard."
     )
 
@@ -71,20 +71,11 @@ def _build_user_message(forecast_df: pd.DataFrame, raw_df: pd.DataFrame) -> str:
 
 
 def run(forecast_df: pd.DataFrame, raw_df: pd.DataFrame) -> str:
-    client = anthropic.Anthropic(api_key=_get_api_key())
-    user_message = _build_user_message(forecast_df, raw_df)
-
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=600,
-        system=[
-            {
-                "type": "text",
-                "text": _SYSTEM_PROMPT,
-                "cache_control": {"type": "ephemeral"},
-            }
-        ],
-        messages=[{"role": "user", "content": user_message}],
+    genai.configure(api_key=_get_api_key())
+    model = genai.GenerativeModel(
+        model_name=MODEL,
+        system_instruction=_SYSTEM_PROMPT,
     )
-
-    return response.content[0].text
+    user_message = _build_user_message(forecast_df, raw_df)
+    response = model.generate_content(user_message)
+    return response.text

@@ -168,7 +168,7 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Data: NYC TLC Yellow Taxi, January 2024")
     st.caption("Model: Prophet 1.3.0")
-    st.caption("Summary: Claude Sonnet 4.6")
+    st.caption("Summary: Gemini 2.0 Flash")
 
 # --- Main ---
 st.title("NYC Yellow Taxi Demand Forecast")
