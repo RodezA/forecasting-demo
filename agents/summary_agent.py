@@ -1,10 +1,10 @@
 import os
 
-import google.generativeai as genai
 import pandas as pd
 import streamlit as st
+from groq import Groq
 
-MODEL = "gemini-2.0-flash"
+MODEL = "llama-3.3-70b-versatile"
 
 _SYSTEM_PROMPT = (
     "You are a transportation analytics specialist providing executive-level briefings "
@@ -19,14 +19,14 @@ _SYSTEM_PROMPT = (
 
 
 def _get_api_key() -> str:
-    key = st.secrets.get("GEMINI_API_KEY")
+    key = st.secrets.get("GROQ_API_KEY")
     if key:
         return key
-    key = os.environ.get("GEMINI_API_KEY")
+    key = os.environ.get("GROQ_API_KEY")
     if key:
         return key
     raise ValueError(
-        "GEMINI_API_KEY not found. "
+        "GROQ_API_KEY not found. "
         "Set it in .streamlit/secrets.toml locally or in the Streamlit Cloud dashboard."
     )
 
@@ -71,11 +71,16 @@ def _build_user_message(forecast_df: pd.DataFrame, raw_df: pd.DataFrame) -> str:
 
 
 def run(forecast_df: pd.DataFrame, raw_df: pd.DataFrame) -> str:
-    genai.configure(api_key=_get_api_key())
-    model = genai.GenerativeModel(
-        model_name=MODEL,
-        system_instruction=_SYSTEM_PROMPT,
-    )
+    client = Groq(api_key=_get_api_key())
     user_message = _build_user_message(forecast_df, raw_df)
-    response = model.generate_content(user_message)
-    return response.text
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        max_tokens=600,
+        messages=[
+            {"role": "system", "content": _SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+        ],
+    )
+
+    return response.choices[0].message.content

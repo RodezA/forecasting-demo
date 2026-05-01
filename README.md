@@ -1,6 +1,6 @@
 # NYC Taxi Demand Forecast
 
-A multi-agent forecasting demo built with Streamlit. Fetches NYC yellow taxi trip data, generates a probabilistic forecast using Prophet, and produces an executive summary via Gemini.
+A multi-agent forecasting demo built with Streamlit. Fetches NYC yellow taxi trip data, generates a probabilistic forecast using Prophet, and produces an executive summary via Groq.
 
 ## Live Demo
 
@@ -14,7 +14,7 @@ Three independent agents orchestrated by `app.py`:
 |-------|------|------|
 | Data | `agents/data_agent.py` | Downloads NYC TLC parquet, aggregates to daily trip counts |
 | Forecasting | `agents/forecasting_agent.py` | Fits Prophet model, returns probabilistic forecast |
-| Summary | `agents/summary_agent.py` | Calls Gemini 2.0 Flash to generate an executive summary |
+| Summary | `agents/summary_agent.py` | Calls Groq (Llama 3.3 70B) to generate an executive summary |
 
 ```mermaid
 flowchart TD
@@ -25,7 +25,7 @@ flowchart TD
     C -->|forecast statistics| E[Summary Agent\nsummary_agent.py]
     B -->|historical statistics| E
     E -->|3-paragraph markdown| D
-    F[Google Gemini 2.0 Flash\nfree API] -->|LLM inference| E
+    F[Groq — Llama 3.3 70B\nfree API] -->|LLM inference| E
 ```
 
 ## A Note on "Multi-Agent"
@@ -45,7 +45,7 @@ In practice, this would be implemented using an agent framework (such as the Ant
 - [Streamlit](https://streamlit.io) — UI and deployment
 - [Prophet](https://facebook.github.io/prophet/) — time series forecasting
 - [Plotly](https://plotly.com) — interactive chart
-- [Google Gemini 2.0 Flash](https://ai.google.dev) — natural-language executive summary (free tier)
+- [Groq](https://groq.com) — natural-language executive summary via Llama 3.3 70B (free tier)
 - [NYC TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) — public dataset
 
 ## Local Setup
@@ -61,10 +61,10 @@ pip install -r requirements.txt
 Create `.streamlit/secrets.toml` (see `secrets.toml.example`):
 
 ```toml
-GEMINI_API_KEY = "AIza..."
+GROQ_API_KEY = "gsk_..."
 ```
 
-Get a free API key from Google AI Studio at https://aistudio.google.com.
+Get a free API key from the Groq console at https://console.groq.com.
 
 ```bash
 streamlit run app.py
