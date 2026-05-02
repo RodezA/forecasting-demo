@@ -6,6 +6,29 @@ A multi-agent forecasting demo built with Streamlit. Fetches NYC yellow taxi tri
 
 [forecasting-demo-edmrrbnggmqxk3pnsgsfw5.streamlit.app](https://forecasting-demo-edmrrbnggmqxk3pnsgsfw5.streamlit.app)
 
+## Why This Matters
+
+Demand forecasting is one of the highest-leverage capabilities an organization can have. Every industry that moves people, goods, or resources operates more efficiently when it can see what's coming — and most of them are still doing it with spreadsheets, gut feel, or expensive proprietary tools.
+
+This project demonstrates that a production-grade forecasting pipeline with probabilistic uncertainty bounds and natural-language interpretation can be assembled from entirely open-source and free-tier components. That has real consequences for who can use forecasting and at what cost.
+
+**Industries where this stack applies directly:**
+
+- **Logistics and delivery** — forecast parcel volumes by route or depot to pre-position drivers and vehicles before demand spikes, not after.
+- **Retail and e-commerce** — predict daily or weekly order volumes to optimize staffing at fulfillment centers and reduce both overstock and stockouts.
+- **Healthcare** — anticipate emergency department visit load, appointment demand, or medication usage to staff appropriately and avoid critical shortages.
+- **Energy and utilities** — model electricity or water demand curves by zone, enabling smarter load balancing and infrastructure investment decisions.
+- **Public transit** — extend this exact taxi model to buses, trains, or bikeshare — any ridership dataset with timestamps produces actionable capacity forecasts.
+- **Hospitality and events** — project occupancy, reservation volume, or food-and-beverage demand to reduce waste and improve guest experience.
+- **SaaS and infrastructure** — forecast API call volume or compute usage to right-size capacity and avoid both over-provisioning and service degradation.
+- **Finance** — apply the same probabilistic framework to transaction volumes, support ticket inflows, or any operational metric that drives cost.
+
+**What makes this architecture worth replicating:**
+
+The modular agent design means any component can be swapped independently. Replace Prophet with a Temporal Fusion Transformer for a dataset where deep learning outperforms classical methods — the summary agent needs no changes. Point the data agent at a different source entirely — the forecasting and summarization layers are unaffected. That decoupling is the real value, not any single library choice.
+
+The executive summary layer turns a statistical artifact into a decision-support tool. A forecast DataFrame is useful to a data scientist; a three-paragraph plain-English interpretation of that same forecast is useful to a VP of Operations making a staffing call at 8am. Bridging that gap is what makes AI-assisted forecasting actually get used.
+
 ## Architecture
 
 Three independent agents orchestrated by `app.py`:
